@@ -1,5 +1,6 @@
 package dev.wagnus.ehcache.config;
 
+import dev.wagnus.ehcache.ConfigComponent;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -11,6 +12,7 @@ import org.ehcache.core.config.DefaultConfiguration;
 import org.ehcache.expiry.ExpiryPolicy;
 import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.ehcache.xml.XmlConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +27,10 @@ import java.util.Map;
 @Configuration
 @EnableCaching
 public class EhcacheConfig {
+
+    @Autowired
+    private ConfigComponent configComponent;
+
 
 //    public CacheManager cacheManager() {
 //        final URL myUrl = getClass().getResource("/configs/docs/getting-started.xml");
@@ -44,8 +50,8 @@ public class EhcacheConfig {
 
     @Bean
     public JCacheCacheManager jCacheCacheManager1() {
-        final URL myUrl = getClass().getResource("/jcache.xml");
-        XmlConfiguration xmlConfig = new XmlConfiguration(myUrl);
+//        final URL myUrl = getClass().getResource("/jcache.xml");
+        XmlConfiguration xmlConfig = this.configComponent.xmlConfiguration();
         EhcacheCachingProvider ehcacheCachingProvider = (EhcacheCachingProvider) Caching.getCachingProvider(EhcacheCachingProvider.class.getName());
         DefaultConfiguration defaultConfiguration = new DefaultConfiguration(xmlConfig.getCacheConfigurations(), ehcacheCachingProvider.getDefaultClassLoader());
         javax.cache.CacheManager cacheManager = ehcacheCachingProvider.getCacheManager(ehcacheCachingProvider.getDefaultURI(), defaultConfiguration);
